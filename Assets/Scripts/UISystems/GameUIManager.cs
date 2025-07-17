@@ -9,7 +9,7 @@ public class GameUIManager : MonoBehaviour
     public Button increaseBetButton;
     public Button decreaseBetButton;
     public TextMeshProUGUI betAmountText;
-    public Dropdown spinNumberDropdown;
+    public TMP_Dropdown spinNumberDropdown;
     private BetManager betManager;
     private GameManager gameManager;
 
@@ -48,7 +48,7 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateBetAmountUI()
     {
-        betAmountText.SetText( $"BET: {betManager.CurrentBetAmount:N0}");
+        betAmountText.SetText(betManager.CurrentBetAmount.ToString());
     }
     private void SetupDropdown()
     {

@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     private IRouletteAnimator animator;
     private int currentNumber;
     private int SelectedBetNumber;
-
+    public BetManager betManager;
     private void Awake()
     {
         animator = rouletteAnimator;
@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     private void OnSpinCompleted(int resultNumber)
     {
+        betManager.EvaluateBets(resultNumber);
         Debug.Log($"Spin ended, the number: {resultNumber}");
     }
 
