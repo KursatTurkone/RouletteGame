@@ -10,6 +10,7 @@ public class RouletteTableRaycaster : MonoBehaviour
     [SerializeField] float cellWidth = 1f;
     [SerializeField] float cellHeight = 1f;
     public LayerMask tableLayer;
+    public BetManager betManager;
 
     private List<IBetDetector> detectors;
 
@@ -48,9 +49,19 @@ public class RouletteTableRaycaster : MonoBehaviour
         {
             if (detector.TryDetect(xPercent, zPercent, row, col, rows, cols, out int[] numbers))
             {
+                if (numbers.Length == 1)
+                {
+                    betManager.PlaceNumberBet(numbers[0], betManager.CurrentBetAmount);
+                }
+                else
+                {
+                    var payout = RoulettePayouts.GetPayoutForNumberCount(numbers.Length);
+                    betManager.PlaceGroupBet(numbers, betManager.CurrentBetAmount, payout);
+                }
                 Debug.Log(string.Join("-", numbers));
                 return;
             }
         }
     }
+    
 }

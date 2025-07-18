@@ -16,7 +16,7 @@ public class BetRaycaster : MonoBehaviour
                 if (betBox != null)
                 {
                     int amount = betManager.CurrentBetAmount;
-                    bool success = betManager.PlaceBet(betBox.betType, amount, betBox.Multiplier);
+                    bool success = betManager.PlaceSpecialBet(betBox.betType, amount);
                     if (success)
                     {
                         betBox.OnBetPlaced(amount);
