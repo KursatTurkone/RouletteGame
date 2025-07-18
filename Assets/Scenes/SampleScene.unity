@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 44
+  betType: 7
   highlightRenderer: {fileID: 0}
 --- !u!65 &47607740
 BoxCollider:
@@ -706,7 +706,7 @@ Transform:
   m_GameObject: {fileID: 175789516}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -13.5, y: 5.89974, z: 55.1}
+  m_LocalPosition: {x: -10.1, y: 5.89974, z: 55.1}
   m_LocalScale: {x: 21.640087, y: 13.3265705, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -724,7 +724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 46
+  betType: 9
   highlightRenderer: {fileID: 0}
 --- !u!65 &175789519
 BoxCollider:
@@ -1871,7 +1871,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 40
+  betType: 3
   highlightRenderer: {fileID: 0}
 --- !u!65 &393505604
 BoxCollider:
@@ -2265,7 +2265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 47
+  betType: 10
   highlightRenderer: {fileID: 0}
 --- !u!65 &471135434
 BoxCollider:
@@ -3869,7 +3869,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 3
+  betType: 13
   highlightRenderer: {fileID: 0}
 --- !u!65 &746395559
 BoxCollider:
@@ -6700,7 +6700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 49
+  betType: 12
   highlightRenderer: {fileID: 0}
 --- !u!65 &909186268
 BoxCollider:
@@ -7197,7 +7197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 41
+  betType: 4
   highlightRenderer: {fileID: 0}
 --- !u!65 &1005817499
 BoxCollider:
@@ -8336,7 +8336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 48
+  betType: 11
   highlightRenderer: {fileID: 0}
 --- !u!65 &1231842419
 BoxCollider:
@@ -8487,8 +8487,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1372587701}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -154.5, y: -5.899744, z: -41.470306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8505,7 +8505,7 @@ Transform:
   - {fileID: 1231842417}
   - {fileID: 124175163}
   - {fileID: 1005817497}
-  m_Father: {fileID: 1462618315}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1377908520
 GameObject:
@@ -8794,12 +8794,11 @@ Transform:
   m_GameObject: {fileID: 1462618314}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -144.96036, y: -5.899744, z: -41.470306}
+  m_LocalPosition: {x: -154.5, y: -5.899744, z: -41.470306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 528489876}
-  - {fileID: 1372587702}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1462618316
@@ -8980,7 +8979,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 43
+  betType: 6
   highlightRenderer: {fileID: 0}
 --- !u!65 &1533901125
 BoxCollider:
@@ -9992,7 +9991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 42
+  betType: 5
   highlightRenderer: {fileID: 0}
 --- !u!65 &1857942505
 BoxCollider:
@@ -10656,7 +10655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae9b825c6e11e841acc6f7de6debc5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betType: 45
+  betType: 8
   highlightRenderer: {fileID: 0}
 --- !u!65 &2009233308
 BoxCollider:
@@ -11215,4 +11214,5 @@ SceneRoots:
   - {fileID: 269868218}
   - {fileID: 520839191}
   - {fileID: 1123931197}
+  - {fileID: 1372587702}
   - {fileID: 1462618315}

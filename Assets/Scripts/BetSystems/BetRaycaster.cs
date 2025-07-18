@@ -12,7 +12,7 @@ public class BetRaycaster : MonoBehaviour
             Ray ray = uiCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                var betBox = hit.collider.GetComponent<BetBox>();
+                hit.collider.TryGetComponent(out BetBox betBox); 
                 if (betBox != null)
                 {
                     int amount = betManager.CurrentBetAmount;

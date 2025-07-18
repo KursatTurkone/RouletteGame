@@ -57,7 +57,7 @@ public class GameUIManager : MonoBehaviour
         {
             "Random"
         };
-        for (int i = 1; i <= 36; i++)
+        for (int i = 0; i <= 36; i++)
             options.Add(i.ToString());
         spinNumberDropdown.AddOptions(options);
 
@@ -69,6 +69,6 @@ public class GameUIManager : MonoBehaviour
         if (index == 0)
             gameManager.SetCurrentSpinNumber(-1); 
         else
-            gameManager.SetCurrentSpinNumber(index);
+            gameManager.SetCurrentSpinNumber(index-1);
     }
 }
