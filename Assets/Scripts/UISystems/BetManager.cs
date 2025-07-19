@@ -11,7 +11,7 @@ public class BetManager : MonoBehaviour
    [SerializeField] private int MinBet = 5000;
    [SerializeField] private int MaxBet = 100000;
    [SerializeField] private int PlayerChips = 100000;
-
+    [SerializeField] private CoinSpawner coinSpawner;
     // Tüm bahisler burada
     private readonly List<IPlacedBet> placedBets = new List<IPlacedBet>();
 
@@ -23,12 +23,13 @@ public class BetManager : MonoBehaviour
     public void DecreaseBet() =>
         CurrentBetAmount = Mathf.Max(CurrentBetAmount - BetStep, MinBet);
 
-    public bool PlaceSpecialBet(BetType betType, int amount)
+    public bool PlaceSpecialBet(BetType betType, int amount,Transform transformOfSpecial)
     {
         if (PlayerChips < amount) return false;
         placedBets.Add(new SpecialBet(betType, amount));
         PlayerChips -= amount;
         UpdateChipsText();
+        coinSpawner.DropCoinToPosition(transformOfSpecial.position+ Vector3.up * 2f);
         return true;
     }
 
@@ -38,7 +39,8 @@ public class BetManager : MonoBehaviour
         placedBets.Add(new NumberBet(number, amount));
         PlayerChips -= amount;
         UpdateChipsText();
-       
+        coinSpawner.DropCoinToNumbers(new int[]{ number });
+
     }
 
     public void PlaceGroupBet(int[] numbers, int amount, int payoutMultiplier)
@@ -47,6 +49,7 @@ public class BetManager : MonoBehaviour
         placedBets.Add(new GroupBet(numbers, amount, payoutMultiplier));
         PlayerChips -= amount;
         UpdateChipsText();
+        coinSpawner.DropCoinToNumbers(numbers);
     }
 
     public void EvaluateBets(int spinResult)
@@ -57,7 +60,7 @@ public class BetManager : MonoBehaviour
 
         if (totalWin > 0)
             AddChips(totalWin);
-
+        coinSpawner.DestroyAllCoins();
         placedBets.Clear();
     }
 

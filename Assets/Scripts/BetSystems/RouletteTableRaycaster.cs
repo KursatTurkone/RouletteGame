@@ -63,5 +63,20 @@ public class RouletteTableRaycaster : MonoBehaviour
             }
         }
     }
-    
+    public Vector3 GetCellCenter(int number)
+    {
+        int row = (number - 1) / cols;
+        int col = (number - 1) % cols;
+        return startPosTransform.position
+               + Vector3.forward * (col * cellWidth + cellWidth / 2f)
+               + Vector3.right * (row * cellHeight + cellHeight / 2f);
+    }
+
+    public Vector3 GetCellsCenter(int[] numbers)
+    {
+        Vector3 sum = Vector3.zero;
+        foreach (var num in numbers)
+            sum += GetCellCenter(num);
+        return sum / numbers.Length;
+    }
 }
