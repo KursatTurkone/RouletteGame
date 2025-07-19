@@ -7,48 +7,58 @@ public class CoinSpawner : MonoBehaviour
     public Transform spawnPoint;
     public RouletteTableRaycaster raycaster;
 
-    private readonly List<GameObject> activeCoins = new List<GameObject>();
+    // Her grid noktası için tek coin
+    private readonly Dictionary<string, GameObject> activeCoins = new Dictionary<string, GameObject>();
+    private readonly Dictionary<string, int> coinAmounts = new Dictionary<string, int>();
+
     private readonly Queue<GameObject> coinPool = new Queue<GameObject>();
 
-    public void DropCoinToNumbers(int[] numbers)
-    {
-        Vector3 targetPos = (numbers.Length == 1)
-            ? raycaster.GetCellCenter(numbers[0])
-            : raycaster.GetCellsCenter(numbers);
 
-        SpawnAndJump(targetPos);
-    }
-
-    public void DropCoinToPosition(Vector3 targetPos)
+   
+    public void DropCoinToPosition(Vector3 targetPos, string key, int amount)
     {
-        SpawnAndJump(targetPos);
-    }
+        int total = amount;
+        if (coinAmounts.TryGetValue(key, out int prev))
+            total += prev;
+        coinAmounts[key] = total;
 
-    private void SpawnAndJump(Vector3 targetPos)
-    {
+        GameObject oldCoin = null;
+        activeCoins.TryGetValue(key, out oldCoin);
+
         GameObject coin = GetCoin();
         coin.transform.position = spawnPoint.position;
         coin.SetActive(true);
-        activeCoins.Add(coin);
 
-        MyTween.JumpTo(this, coin.transform, targetPos, 2.5f, 0.65f, null, EaseType.OutCubic);
+        var coinDisplay = coin.GetComponent<CoinDisplay>();
+        if (coinDisplay != null)
+            coinDisplay.SetAmount(total);
+        activeCoins[key] = coin;
+
+        MyTween.JumpTo(this, coin.transform, targetPos, 2.5f, 0.65f, () =>
+        {
+            if (oldCoin != null && oldCoin != coin)
+            {
+                oldCoin.SetActive(false);
+                coinPool.Enqueue(oldCoin);
+            }
+        }, EaseType.OutCubic);
     }
-    
+
+
+
+
+
     private GameObject GetCoin()
     {
         if (coinPool.Count > 0)
-        {
             return coinPool.Dequeue();
-        }
         else
-        {
             return Instantiate(coinPrefab);
-        }
     }
-    
+
     public void DestroyAllCoins()
     {
-        foreach (var coin in activeCoins)
+        foreach (var coin in activeCoins.Values)
         {
             if (coin != null)
             {
@@ -56,6 +66,7 @@ public class CoinSpawner : MonoBehaviour
                 coinPool.Enqueue(coin);
             }
         }
+        coinAmounts.Clear();
         activeCoins.Clear();
     }
 }

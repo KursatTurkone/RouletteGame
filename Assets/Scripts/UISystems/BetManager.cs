@@ -12,7 +12,8 @@ public class BetManager : MonoBehaviour
    [SerializeField] private int MaxBet = 100000;
    [SerializeField] private int PlayerChips = 100000;
     [SerializeField] private CoinSpawner coinSpawner;
-    // Tüm bahisler burada
+    [SerializeField] private RouletteTableRaycaster Raycaster;
+
     private readonly List<IPlacedBet> placedBets = new List<IPlacedBet>();
 
     private void Start() => UpdateChipsText();
@@ -29,7 +30,7 @@ public class BetManager : MonoBehaviour
         placedBets.Add(new SpecialBet(betType, amount));
         PlayerChips -= amount;
         UpdateChipsText();
-        coinSpawner.DropCoinToPosition(transformOfSpecial.position+ Vector3.up * 2f);
+        coinSpawner.DropCoinToPosition(transformOfSpecial.position+ Vector3.up * 2f,betType.ToString(), amount);
         return true;
     }
 
@@ -39,8 +40,9 @@ public class BetManager : MonoBehaviour
         placedBets.Add(new NumberBet(number, amount));
         PlayerChips -= amount;
         UpdateChipsText();
-        coinSpawner.DropCoinToNumbers(new int[]{ number });
-
+        Vector3 pos = Raycaster.GetCellCenter(number);
+        string key = number.ToString();
+        coinSpawner.DropCoinToPosition(pos, key, amount);
     }
 
     public void PlaceGroupBet(int[] numbers, int amount, int payoutMultiplier)
@@ -49,7 +51,9 @@ public class BetManager : MonoBehaviour
         placedBets.Add(new GroupBet(numbers, amount, payoutMultiplier));
         PlayerChips -= amount;
         UpdateChipsText();
-        coinSpawner.DropCoinToNumbers(numbers);
+        string key = string.Join("-", numbers);
+        Vector3 pos = Raycaster.GetCellsCenter(numbers);
+        coinSpawner.DropCoinToPosition(pos, key, amount);
     }
 
     public void EvaluateBets(int spinResult)
