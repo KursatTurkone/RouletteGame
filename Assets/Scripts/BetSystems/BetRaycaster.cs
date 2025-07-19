@@ -20,7 +20,6 @@ public class BetRaycaster : MonoBehaviour
                     if (success)
                     {
                         betBox.OnBetPlaced(amount);
-                        // Gonna make Chip Animation here
                     }
                     else
                     {

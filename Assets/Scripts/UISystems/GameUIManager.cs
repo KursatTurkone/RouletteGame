@@ -5,11 +5,15 @@ using UnityEngine.UI;
 public class GameUIManager : MonoBehaviour
 {
     [Header("UI References")]
-    public Button spinButton;
-    public Button increaseBetButton;
-    public Button decreaseBetButton;
-    public TextMeshProUGUI betAmountText;
-    public TMP_Dropdown spinNumberDropdown;
+   [SerializeField] private Button spinButton;
+   [SerializeField] private Button increaseBetButton;
+   [SerializeField] private Button decreaseBetButton;
+   [SerializeField] private TextMeshProUGUI betAmountText;
+   [SerializeField] private TMP_Dropdown spinNumberDropdown;
+   [SerializeField] private GameObject winScreen;
+   [SerializeField] private TextMeshProUGUI winText;
+   [SerializeField] private GameObject loseScreen;
+   [SerializeField] private TextMeshProUGUI loseText;
     private BetManager betManager;
     private GameManager gameManager;
 
@@ -70,5 +74,36 @@ public class GameUIManager : MonoBehaviour
             gameManager.SetCurrentSpinNumber(-1); 
         else
             gameManager.SetCurrentSpinNumber(index-1);
+    }
+    public void ShowWinNotification(int winAmount)
+    {
+        winText.SetText($"You Win: {winAmount}");
+        winScreen.SetActive(true);
+        MyTween.ScaleTo(this, winScreen.transform, Vector3.one, 0.5f, DisableWinScreen, EaseType.OutCubic);
+    }
+
+    private void DisableWinScreen()
+    {
+        MyTween.Delay(this, 1f, () =>
+        {
+            winScreen.SetActive(false);
+            winScreen.transform.localScale = Vector3.zero;
+        });
+    }
+
+    private void DisableLoseScreen()
+    {
+        MyTween.Delay(this, 1f, () =>
+        {
+            loseScreen.SetActive(false);
+            loseScreen.transform.localScale = Vector3.zero;
+        });
+    }
+
+    public void ShowLoseNotification(int loseAmount)
+    {
+        loseText.SetText($"You Lose: {loseAmount}");
+        loseScreen.SetActive(true);
+        MyTween.ScaleTo(this, loseScreen.transform, Vector3.one, 0.5f, DisableLoseScreen, EaseType.OutCubic);
     }
 }

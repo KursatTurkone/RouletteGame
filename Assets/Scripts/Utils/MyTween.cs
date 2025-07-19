@@ -4,6 +4,16 @@ using UnityEngine;
 
 public static class MyTween
 {
+    public static Coroutine Delay(MonoBehaviour runner, float delay, Action action)
+    {
+        return runner.StartCoroutine(DelayRoutine(delay, action));
+    }
+
+    private static IEnumerator DelayRoutine(float delay, Action action)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
+    }
     public static Coroutine MoveTo(MonoBehaviour runner, Transform target, Vector3 endPos, float duration,
         Action onComplete = null, EaseType easeType = EaseType.Linear)
     {

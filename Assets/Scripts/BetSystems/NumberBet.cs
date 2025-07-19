@@ -1,12 +1,14 @@
 public class NumberBet : IPlacedBet
 {
-    private int number;
-    private int amount;
+    public int Number { get; }
+    public int Amount { get; }
+
     public NumberBet(int number, int amount)
     {
-        this.number = number;
-        this.amount = amount;
+        Number = number;
+        Amount = amount; 
     }
-    public bool IsWin(int spinResult) => number == spinResult;
-    public int GetWinAmount(int spinResult) => IsWin(spinResult) ? amount * 36 : 0;
+
+    public bool IsWin(int spinResult) => Number == spinResult;
+    public int GetWinAmount(int spinResult) => IsWin(spinResult) ? Amount * 36 : 0;
 }

@@ -1,14 +1,16 @@
 public class GroupBet : IPlacedBet
 {
-    private int[] numbers;
-    private int amount;
-    private int payoutMultiplier;
+    public int[] Numbers { get; }
+    public int Amount { get; }
+    public int PayoutMultiplier { get; }
+
     public GroupBet(int[] numbers, int amount, int payoutMultiplier)
     {
-        this.numbers = numbers;
-        this.amount = amount;
-        this.payoutMultiplier = payoutMultiplier;
+        Numbers = numbers;
+        Amount = amount;
+        PayoutMultiplier = payoutMultiplier;
     }
-    public bool IsWin(int spinResult) => System.Array.Exists(numbers, n => n == spinResult);
-    public int GetWinAmount(int spinResult) => IsWin(spinResult) ? amount * payoutMultiplier : 0;
+
+    public bool IsWin(int spinResult) => System.Array.Exists(Numbers, n => n == spinResult);
+    public int GetWinAmount(int spinResult) => IsWin(spinResult) ? Amount * PayoutMultiplier : 0;
 }

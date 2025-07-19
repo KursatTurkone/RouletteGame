@@ -7,7 +7,8 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
     [Header("References")]
     [SerializeField] private Transform wheel;
     [SerializeField] private Transform ball;
-
+    [SerializeField] private RouletteBallAudio ballAudio;
+    
     [Header("Slot Anchors")]
     [SerializeField] private Transform[] slotAnchors;
 
@@ -49,6 +50,7 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
 
     private IEnumerator SpinRoutine(int targetIndex, Action<int> onComplete)
     {
+        ballAudio.PlayRollSound();
         float elapsed = 0f;
         float wheelStart = wheel.eulerAngles.y;
         float wheelTarget = wheelStart + 360f * wheelSpins + (360f * targetIndex / numberOrder.Length);
@@ -116,7 +118,7 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
             yield return null;
         }
         ball.position = jumpEnd;
-
+        ballAudio.StopRollSound();
         onComplete?.Invoke(numberOrder[targetIndex]);
     }
     
