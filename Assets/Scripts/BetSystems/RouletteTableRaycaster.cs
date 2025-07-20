@@ -4,15 +4,15 @@ using System.Collections.Generic;
 [ExecuteAlways]
 public class RouletteTableRaycaster : MonoBehaviour
 {
-    public Transform startPosTransform;
+    [SerializeField] private Transform startPosTransform;
     [SerializeField] int rows = 12;
     [SerializeField] int cols = 3;
     [SerializeField] float cellWidth = 1f;
     [SerializeField] float cellHeight = 1f;
-    public LayerMask tableLayer;
-    public BetManager betManager;
+    [SerializeField] private LayerMask tableLayer;
+    [SerializeField] private BetManager betManager;
 
-    private List<IBetDetector> detectors;
+    private List<IBetDetector> _detectors;
 
     void Awake()
     {
@@ -21,7 +21,7 @@ public class RouletteTableRaycaster : MonoBehaviour
 
     void SetupDetectors()
     {
-        detectors = new List<IBetDetector>
+        _detectors = new List<IBetDetector>
         {
             new CornerBetDetector(0.18f),
             new SplitBetDetector(0.22f),
@@ -45,7 +45,7 @@ public class RouletteTableRaycaster : MonoBehaviour
         float xPercent = (local.x % cellHeight) / cellHeight;
         float zPercent = (local.z % cellWidth) / cellWidth;
 
-        foreach (var detector in detectors)
+        foreach (var detector in _detectors)
         {
             if (detector.TryDetect(xPercent, zPercent, row, col, rows, cols, out int[] numbers))
             {
@@ -58,11 +58,13 @@ public class RouletteTableRaycaster : MonoBehaviour
                     var payout = RoulettePayouts.GetPayoutForNumberCount(numbers.Length);
                     betManager.PlaceGroupBet(numbers, betManager.CurrentBetAmount, payout);
                 }
+
                 Debug.Log(string.Join("-", numbers));
                 return;
             }
         }
     }
+
     public Vector3 GetCellCenter(int number)
     {
         int row = (number - 1) / cols;

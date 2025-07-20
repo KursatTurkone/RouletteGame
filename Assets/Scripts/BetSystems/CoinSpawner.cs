@@ -3,18 +3,14 @@ using UnityEngine;
 
 public class CoinSpawner : MonoBehaviour
 {
-    public GameObject coinPrefab;
-    public Transform spawnPoint;
-    public RouletteTableRaycaster raycaster;
-
-    // Her grid noktası için tek coin
+    [SerializeField] private GameObject coinPrefab;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private RouletteTableRaycaster raycaster;
     private readonly Dictionary<string, GameObject> activeCoins = new Dictionary<string, GameObject>();
     private readonly Dictionary<string, int> coinAmounts = new Dictionary<string, int>();
-
     private readonly Queue<GameObject> coinPool = new Queue<GameObject>();
 
 
-   
     public void DropCoinToPosition(Vector3 targetPos, string key, int amount)
     {
         int total = amount;
@@ -29,7 +25,7 @@ public class CoinSpawner : MonoBehaviour
         coin.transform.position = spawnPoint.position;
         coin.SetActive(true);
 
-        var coinDisplay = coin.GetComponent<CoinDisplay>();
+        coin.TryGetComponent(out CoinDisplay coinDisplay);
         if (coinDisplay != null)
             coinDisplay.SetAmount(total);
         activeCoins[key] = coin;
@@ -41,11 +37,10 @@ public class CoinSpawner : MonoBehaviour
                 oldCoin.SetActive(false);
                 coinPool.Enqueue(oldCoin);
             }
+
+            coinDisplay.PlayPutCoinSound();
         }, EaseType.OutCubic);
     }
-
-
-
 
 
     private GameObject GetCoin()
@@ -66,6 +61,7 @@ public class CoinSpawner : MonoBehaviour
                 coinPool.Enqueue(coin);
             }
         }
+
         coinAmounts.Clear();
         activeCoins.Clear();
     }

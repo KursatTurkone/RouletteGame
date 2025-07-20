@@ -1,6 +1,6 @@
 public class SpecialBet : IPlacedBet
 {
-    public BetType BetType { get; }
+    private BetType BetType { get; }
     public int Amount { get; }
 
     public SpecialBet(BetType betType, int amount)

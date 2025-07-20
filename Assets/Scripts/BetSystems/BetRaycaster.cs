@@ -21,10 +21,6 @@ public class BetRaycaster : MonoBehaviour
                     {
                         betBox.OnBetPlaced(amount);
                     }
-                    else
-                    {
-                        // Not enough chips
-                    }
                 }
             }
         }

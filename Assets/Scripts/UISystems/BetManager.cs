@@ -7,28 +7,32 @@ public class BetManager : MonoBehaviour
     [Header("UI")] [SerializeField] private TextMeshProUGUI chipsText;
 
     public int CurrentBetAmount { get; private set; } = 5000;
-    [SerializeField] private int BetStep = 5000;
-    [SerializeField] private int MinBet = 5000;
-    [SerializeField] private int MaxBet = 100000;
-    [SerializeField] private int PlayerChips = 100000;
+    [SerializeField] private int betStep = 5000;
+    [SerializeField] private int minBet = 5000;
+    [SerializeField] private int maxBet = 100000;
+    [SerializeField] private int playerChips = 100000;
     [SerializeField] private CoinSpawner coinSpawner;
-    [SerializeField] private RouletteTableRaycaster Raycaster;
+    [SerializeField] private RouletteTableRaycaster raycaster;
     [SerializeField] private GameUIManager gameUIManager;
-    private readonly List<IPlacedBet> placedBets = new List<IPlacedBet>();
+    private readonly List<IPlacedBet> _placedBets = new List<IPlacedBet>();
 
-    private void Start() => UpdateChipsText();
+    private void Start()
+    {
+        GameManager.Instance.betManager = this;
+        UpdateChipsText();
+    }
 
     public void IncreaseBet() =>
-        CurrentBetAmount = Mathf.Min(CurrentBetAmount + BetStep, MaxBet);
+        CurrentBetAmount = Mathf.Min(CurrentBetAmount + betStep, maxBet);
 
     public void DecreaseBet() =>
-        CurrentBetAmount = Mathf.Max(CurrentBetAmount - BetStep, MinBet);
+        CurrentBetAmount = Mathf.Max(CurrentBetAmount - betStep, minBet);
 
     public bool PlaceSpecialBet(BetType betType, int amount, Transform transformOfSpecial)
     {
-        if (PlayerChips < amount) return false;
-        placedBets.Add(new SpecialBet(betType, amount));
-        PlayerChips -= amount;
+        if (playerChips < amount) return false;
+        _placedBets.Add(new SpecialBet(betType, amount));
+        playerChips -= amount;
         UpdateChipsText();
         coinSpawner.DropCoinToPosition(transformOfSpecial.position + Vector3.up * 2f, betType.ToString(), amount);
         return true;
@@ -36,23 +40,23 @@ public class BetManager : MonoBehaviour
 
     public void PlaceNumberBet(int number, int amount)
     {
-        if (PlayerChips < amount) return;
-        placedBets.Add(new NumberBet(number, amount));
-        PlayerChips -= amount;
+        if (playerChips < amount) return;
+        _placedBets.Add(new NumberBet(number, amount));
+        playerChips -= amount;
         UpdateChipsText();
-        Vector3 pos = Raycaster.GetCellCenter(number);
+        Vector3 pos = raycaster.GetCellCenter(number);
         string key = number.ToString();
         coinSpawner.DropCoinToPosition(pos, key, amount);
     }
 
     public void PlaceGroupBet(int[] numbers, int amount, int payoutMultiplier)
     {
-        if (PlayerChips < amount) return;
-        placedBets.Add(new GroupBet(numbers, amount, payoutMultiplier));
-        PlayerChips -= amount;
+        if (playerChips < amount) return;
+        _placedBets.Add(new GroupBet(numbers, amount, payoutMultiplier));
+        playerChips -= amount;
         UpdateChipsText();
         string key = string.Join("-", numbers);
-        Vector3 pos = Raycaster.GetCellsCenter(numbers);
+        Vector3 pos = raycaster.GetCellsCenter(numbers);
         coinSpawner.DropCoinToPosition(pos, key, amount);
     }
 
@@ -61,7 +65,7 @@ public class BetManager : MonoBehaviour
         int totalWin = 0;
         int totalBet = 0;
 
-        foreach (var bet in placedBets)
+        foreach (var bet in _placedBets)
         {
             totalBet += bet.Amount;       
             totalWin += bet.GetWinAmount(spinResult);
@@ -80,18 +84,18 @@ public class BetManager : MonoBehaviour
         }
 
         coinSpawner.DestroyAllCoins();
-        placedBets.Clear();
+        _placedBets.Clear();
     }
 
     private void AddChips(int amount)
     {
-        PlayerChips += amount;
+        playerChips += amount;
         UpdateChipsText();
     }
 
     private void UpdateChipsText()
     {
-        chipsText.text = PlayerChips.ToString("N0");
+        chipsText.text = playerChips.ToString("N0");
     }
 }
 

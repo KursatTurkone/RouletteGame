@@ -1,8 +1,8 @@
 public class GroupBet : IPlacedBet
 {
-    public int[] Numbers { get; }
+    int[] Numbers { get; }
     public int Amount { get; }
-    public int PayoutMultiplier { get; }
+    int PayoutMultiplier { get; }
 
     public GroupBet(int[] numbers, int amount, int payoutMultiplier)
     {

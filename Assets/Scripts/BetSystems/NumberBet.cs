@@ -1,6 +1,6 @@
 public class NumberBet : IPlacedBet
 {
-    public int Number { get; }
+    private int Number { get; }
     public int Amount { get; }
 
     public NumberBet(int number, int amount)

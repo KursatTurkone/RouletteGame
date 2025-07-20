@@ -1,12 +1,12 @@
 public class CornerBetDetector : IBetDetector
 {
-    private readonly float threshold;
-    public CornerBetDetector(float threshold = 0.18f) { this.threshold = threshold; }
+    private readonly float _threshold;
+    public CornerBetDetector(float threshold = 0.18f) { this._threshold = threshold; }
 
     public bool TryDetect(float xPercent, float zPercent, int row, int col, int rows, int cols, out int[] numbers)
     {
         numbers = null;
-        if (xPercent <= threshold && zPercent <= threshold && row > 0 && col > 0)
+        if (xPercent <= _threshold && zPercent <= _threshold && row > 0 && col > 0)
         {
             numbers = new int[]
             {
@@ -17,7 +17,7 @@ public class CornerBetDetector : IBetDetector
             };
             return true;
         }
-        if (xPercent >= 1f - threshold && zPercent <= threshold && row < rows - 1 && col > 0)
+        if (xPercent >= 1f - _threshold && zPercent <= _threshold && row < rows - 1 && col > 0)
         {
             numbers = new int[]
             {
@@ -28,7 +28,7 @@ public class CornerBetDetector : IBetDetector
             };
             return true;
         }
-        if (xPercent <= threshold && zPercent >= 1f - threshold && row > 0 && col < cols - 1)
+        if (xPercent <= _threshold && zPercent >= 1f - _threshold && row > 0 && col < cols - 1)
         {
             numbers = new int[]
             {
@@ -39,7 +39,7 @@ public class CornerBetDetector : IBetDetector
             };
             return true;
         }
-        if (xPercent >= 1f - threshold && zPercent >= 1f - threshold && row < rows - 1 && col < cols - 1)
+        if (xPercent >= 1f - _threshold && zPercent >= 1f - _threshold && row < rows - 1 && col < cols - 1)
         {
             numbers = new int[]
             {
