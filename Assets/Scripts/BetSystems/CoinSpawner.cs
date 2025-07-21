@@ -15,10 +15,7 @@ public class CoinSpawner : MonoBehaviour
 
     public void DropCoinToPosition(Vector3 targetPos, string key, int amount)
     {
-        int total = amount;
-        if (_coinAmounts.TryGetValue(key, out int prev))
-            total += prev;
-        _coinAmounts[key] = total;
+        _coinAmounts[key] = amount;
 
         _activeCoins.TryGetValue(key, out var oldCoin);
 
@@ -27,8 +24,8 @@ public class CoinSpawner : MonoBehaviour
         coin.SetActive(true);
 
         coin.TryGetComponent(out CoinDisplay coinDisplay);
-        if (coinDisplay != null)
-            coinDisplay.SetAmount(total);
+        if (coinDisplay)
+            coinDisplay.SetAmount(amount);
         _activeCoins[key] = coin;
 
         MyTween.JumpTo(this, coin.transform, targetPos, 2.5f, 0.65f, () =>
