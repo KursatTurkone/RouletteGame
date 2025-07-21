@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinSpawner : MonoBehaviour
+public class CoinSpawner : MonoBehaviour, ICoinService
 {
     [SerializeField] private BetManager betManager; 
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private Transform spawnPoint;
-    [SerializeField] private RouletteTableRaycaster raycaster;
+    [SerializeField] private RouletteBetRaycaster raycaster;
     private readonly Dictionary<string, GameObject> _activeCoins = new Dictionary<string, GameObject>();
     private readonly Dictionary<string, int> _coinAmounts = new Dictionary<string, int>();
     private readonly Queue<GameObject> _coinPool = new Queue<GameObject>();
 
 
+    // DropCoinToPosition is used to drop a coin to a specific position on the board.
     public void DropCoinToPosition(Vector3 targetPos, string key, int amount)
     {
         _coinAmounts[key] = amount;
@@ -48,6 +49,7 @@ public class CoinSpawner : MonoBehaviour
         else
             return Instantiate(coinPrefab);
     }
+    
 
     public void DestroyAllCoins()
     {
@@ -63,6 +65,7 @@ public class CoinSpawner : MonoBehaviour
         _coinAmounts.Clear();
         _activeCoins.Clear();
     }
+    // RestoreAllCoins is used to restore all coins based on the provided chip data.
     public void RestoreAllCoins(Dictionary<string, int> chipData)
     {
         foreach (var kvp in chipData)

@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameUIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour, IGameUIManager
 {
     [Header("Spin & Bet Controls")] [SerializeField]
     private Button spinButton;
@@ -26,8 +26,6 @@ public class GameUIManager : MonoBehaviour
     private Image winningChipColorImage;
     [SerializeField] private TextMeshProUGUI winningChipText;
     
-    [Header("Statistic")] [SerializeField]
-    StatisticsUI statisticsUI;
     private BetManager _betManager;
     private GameManager _gameManager;
 

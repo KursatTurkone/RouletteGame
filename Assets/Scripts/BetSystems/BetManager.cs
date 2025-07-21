@@ -7,56 +7,44 @@ public class BetManager : MonoBehaviour
     public int CurrentBetAmount { get; private set; } = 5000;
     private int PlayerChips { get; set; } = 100000;
 
-    [SerializeField] private int betStep = 5000;
-    [SerializeField] private int minBet = 5000;
-    [SerializeField] private int maxBet = 100000;
+    [SerializeField] private int betStep = 5000, minBet = 5000, maxBet = 100000;
+    [SerializeField] private RouletteBetRaycaster raycaster;
 
-    [SerializeField] private CoinSpawner coinSpawner;
-    [SerializeField] private RouletteTableRaycaster raycaster;
-
-    private GameUIManager _gameUIManager;
-    private readonly List<IPlacedBet> _placedBets = new List<IPlacedBet>();
-    private GameSaveData _saveData;
+    private readonly List<IPlacedBet> _placedBets = new();
+    private Dictionary<string, int> _activeChips = new();
     private Dictionary<string, BetBox> _betBoxMap;
-    private Dictionary<string, int> _activeChips;
-    public List<int> WinningNumbers => _saveData.winningNumbers;
-    public int TotalSpins => _saveData.totalSpins;
-    public int TotalWins => _saveData.totalWins;
-    public int TotalLosses => _saveData.totalLosses;
-    public int TotalProfit => _saveData.totalProfit;
-    public int TotalMoneyLoss => _saveData.totalMoneyLoss;
+
+    // DI (Dependency Injection)
+    private IGameUIManager UIManager { get; set; }
+    private ICoinService CoinService { get; set; }
+    private ISaveService SaveService { get; set; }
+    private GameSaveData SaveData { get; set; }
+
+    public List<int> WinningNumbers => SaveData.winningNumbers;
+    public int TotalSpins => SaveData.totalSpins;
+    public int TotalWins => SaveData.totalWins;
+    public int TotalLosses => SaveData.totalLosses;
+    public int TotalProfit => SaveData.totalProfit;
+    public int TotalMoneyLoss => SaveData.totalMoneyLoss;
 
     private void Awake()
     {
-        InitBetBoxes();
-        LoadGame();
-        _gameUIManager = FindObjectOfType<GameUIManager>();
-        _gameUIManager.UpdateChipsText(PlayerChips);
-        coinSpawner.RestoreAllCoins(_activeChips);
-    }
+        SaveService ??= new SaveService();
+        UIManager ??= FindObjectOfType<GameUIManager>();
+        CoinService ??= FindObjectOfType<CoinSpawner>();
 
-    private void Start()
-    {
-        GameManager.Instance.betManager = this;
-    }
-
-    private void InitBetBoxes()
-    {
-        _betBoxMap = new Dictionary<string, BetBox>();
+        _betBoxMap = new();
         foreach (var betBox in FindObjectsOfType<BetBox>())
             _betBoxMap[betBox.betType.ToString()] = betBox;
-    }
 
-    private void LoadGame()
-    {
-        _saveData = SaveSystem.Load<GameSaveData>("GameSave") ?? new GameSaveData();
-        PlayerChips = _saveData.currentMoney;
-        _activeChips = ToDictionary(_saveData.activeChips);
+        SaveData = SaveService.Load("GameSave");
+        PlayerChips = SaveData.currentMoney;
+        _activeChips = ToDictionary(SaveData.activeChips);
 
         _placedBets.Clear();
-        if (_saveData.activeChips != null)
+        if (SaveData.activeChips != null)
         {
-            foreach (var kv in _saveData.activeChips)
+            foreach (var kv in SaveData.activeChips)
             {
                 string key = kv.key;
                 int amount = kv.value;
@@ -65,9 +53,7 @@ public class BetManager : MonoBehaviour
                 else if (key.Contains("-"))
                 {
                     var nums = key.Split('-');
-                    int[] numbers = new int[nums.Length];
-                    for (int i = 0; i < nums.Length; i++)
-                        numbers[i] = int.Parse(nums[i]);
+                    int[] numbers = Array.ConvertAll(nums, int.Parse);
                     int payout = RoulettePayouts.GetPayoutForNumberCount(numbers.Length);
                     _placedBets.Add(new GroupBet(numbers, amount, payout));
                 }
@@ -75,57 +61,69 @@ public class BetManager : MonoBehaviour
                     _placedBets.Add(new SpecialBet(betType, amount));
             }
         }
+
+        UIManager.UpdateChipsText(PlayerChips);
+        CoinService.RestoreAllCoins(_activeChips);
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.betManager = this;
     }
 
     public void IncreaseBet() => CurrentBetAmount = Mathf.Min(CurrentBetAmount + betStep, maxBet);
+
     public void DecreaseBet() => CurrentBetAmount = Mathf.Max(CurrentBetAmount - betStep, minBet);
 
-    public bool PlaceSpecialBet(BetType betType, int amount, Transform transformOfSpecial)
+    // Sets the current bet amount directly
+    public bool PlaceSpecialBet(BetType betType, int amount, Transform betTransform)
     {
         if (PlayerChips < amount) return false;
         _placedBets.Add(new SpecialBet(betType, amount));
         AdjustChips(-amount);
-        AddToActiveChips(betType.ToString(), amount);
 
-        coinSpawner.DropCoinToPosition(transformOfSpecial.position + Vector3.up * 2f, betType.ToString(),
-            _activeChips[betType.ToString()]);
+        string key = betType.ToString();
+        AddToActiveChips(key, amount);
+        CoinService.DropCoinToPosition(betTransform.position + Vector3.up * 2f, key, _activeChips[key]);
         AutoSave();
         return true;
     }
 
+    // Places a bet on a single number
     public void PlaceNumberBet(int number, int amount)
     {
         if (PlayerChips < amount) return;
         _placedBets.Add(new NumberBet(number, amount));
         AdjustChips(-amount);
+
         string key = number.ToString();
         AddToActiveChips(key, amount);
-
         Vector3 pos = raycaster.GetCellCenter(number);
-        coinSpawner.DropCoinToPosition(pos, key, _activeChips[key]);
+        CoinService.DropCoinToPosition(pos, key, _activeChips[key]);
         AutoSave();
     }
 
+    // Places a bet on a group of numbers (e.g., split, corner, street)
     public void PlaceGroupBet(int[] numbers, int amount, int payoutMultiplier)
     {
         if (PlayerChips < amount) return;
         _placedBets.Add(new GroupBet(numbers, amount, payoutMultiplier));
         AdjustChips(-amount);
+
         string key = string.Join("-", numbers);
         AddToActiveChips(key, amount);
-
         Vector3 pos = raycaster.GetCellsCenter(numbers);
-        coinSpawner.DropCoinToPosition(pos, key, _activeChips[key]);
+        CoinService.DropCoinToPosition(pos, key, _activeChips[key]);
         AutoSave();
     }
 
+    // Evaluates all placed bets against the spin result
     public void EvaluateBets(int spinResult)
     {
-        _saveData.winningNumbers.Add(spinResult);
-        _saveData.totalSpins++;
+        SaveData.winningNumbers.Add(spinResult);
+        SaveData.totalSpins++;
 
-        int totalWin = 0;
-        int totalBet = 0;
+        int totalWin = 0, totalBet = 0;
         foreach (var bet in _placedBets)
         {
             totalBet += bet.Amount;
@@ -137,20 +135,20 @@ public class BetManager : MonoBehaviour
         if (totalWin > 0)
         {
             AdjustChips(totalWin);
-            _saveData.totalWins++;
-            _saveData.totalProfit += (totalWin - totalBet);
-            _gameUIManager.ShowResultNotification(true, totalWin, spinResult,
+            SaveData.totalWins++;
+            SaveData.totalProfit += (totalWin - totalBet);
+            UIManager.ShowResultNotification(true, totalWin, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
         else
         {
-            _saveData.totalLosses++;
-            _saveData.totalMoneyLoss += totalLose;
-            _gameUIManager.ShowResultNotification(false, totalLose, spinResult,
+            SaveData.totalLosses++;
+            SaveData.totalMoneyLoss += totalLose;
+            UIManager.ShowResultNotification(false, totalLose, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
 
-        coinSpawner.DestroyAllCoins();
+        CoinService.DestroyAllCoins();
         _placedBets.Clear();
         _activeChips.Clear();
         AutoSave();
@@ -159,14 +157,14 @@ public class BetManager : MonoBehaviour
     public void AdjustChips(int delta)
     {
         PlayerChips += delta;
-        _gameUIManager.UpdateChipsText(PlayerChips);
+        UIManager.UpdateChipsText(PlayerChips);
     }
 
     private void AutoSave()
     {
-        _saveData.currentMoney = PlayerChips;
-        _saveData.activeChips = ToKeyValueList(_activeChips);
-        SaveSystem.Save(_saveData, "GameSave");
+        SaveData.currentMoney = PlayerChips;
+        SaveData.activeChips = ToKeyValueList(_activeChips);
+        SaveService.Save(SaveData, "GameSave");
     }
 
     public Vector3 GetSpecialAreaPosition(string key)
@@ -176,6 +174,7 @@ public class BetManager : MonoBehaviour
         return Vector3.zero;
     }
 
+    // Helpers
     private static List<KeyValue> ToKeyValueList(Dictionary<string, int> dict)
     {
         var list = new List<KeyValue>();
@@ -198,7 +197,8 @@ public class BetManager : MonoBehaviour
 
     private void AddToActiveChips(string key, int amount)
     {
-        _activeChips.TryAdd(key, 0);
+        _activeChips ??= new();
+        if (!_activeChips.ContainsKey(key)) _activeChips[key] = 0;
         _activeChips[key] += amount;
     }
 

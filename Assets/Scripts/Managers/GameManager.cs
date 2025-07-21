@@ -4,12 +4,13 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-   [HideInInspector] public RouletteAnimator rouletteAnimator;
+    [HideInInspector] public RouletteAnimator rouletteAnimator;
+    [HideInInspector] public BetManager betManager;
     public static GameManager Instance { get; private set; }
     private int _currentNumber;
     private int _selectedBetNumber;
-    public BetManager betManager;
     private bool _isSpinning;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -25,7 +26,6 @@ public class GameManager : MonoBehaviour
     {
         _isSpinning = false;
         betManager.EvaluateBets(resultNumber);
-     
     }
 
     public void OnSpinButtonPressed()
