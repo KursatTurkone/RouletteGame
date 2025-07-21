@@ -24,8 +24,10 @@ public class GameUIManager : MonoBehaviour
 
     [Header("Winning Chip Display")] [SerializeField]
     private Image winningChipColorImage;
-
     [SerializeField] private TextMeshProUGUI winningChipText;
+    
+    [Header("Statistic")] [SerializeField]
+    StatisticsUI statisticsUI;
     private BetManager _betManager;
     private GameManager _gameManager;
 

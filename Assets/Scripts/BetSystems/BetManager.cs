@@ -20,6 +20,11 @@ public class BetManager : MonoBehaviour
     private Dictionary<string, BetBox> _betBoxMap;
     private Dictionary<string, int> _activeChips;
     public List<int> WinningNumbers => _saveData.winningNumbers;
+    public int TotalSpins => _saveData.totalSpins;
+    public int TotalWins => _saveData.totalWins;
+    public int TotalLosses => _saveData.totalLosses;
+    public int TotalProfit => _saveData.totalProfit;
+    public int TotalMoneyLoss => _saveData.totalMoneyLoss;
 
     private void Awake()
     {
@@ -117,6 +122,7 @@ public class BetManager : MonoBehaviour
     public void EvaluateBets(int spinResult)
     {
         _saveData.winningNumbers.Add(spinResult);
+        _saveData.totalSpins++;
 
         int totalWin = 0;
         int totalBet = 0;
@@ -127,15 +133,20 @@ public class BetManager : MonoBehaviour
         }
 
         int totalLose = Mathf.Max(0, totalBet - totalWin);
+
         if (totalWin > 0)
         {
             AdjustChips(totalWin);
+            _saveData.totalWins++;
+            _saveData.totalProfit += (totalWin - totalBet);
             _gameUIManager.ShowResultNotification(true, totalWin, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
         else
         {
-            _gameUIManager.ShowResultNotification(false, totalWin, spinResult,
+            _saveData.totalLosses++;
+            _saveData.totalMoneyLoss += totalLose;
+            _gameUIManager.ShowResultNotification(false, totalLose, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
 
