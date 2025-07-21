@@ -74,11 +74,11 @@ public class BetManager : MonoBehaviour
         if (totalWin > 0)
         {
             AddChips(totalWin);
-            _gameUIManager.ShowWinNotification(totalWin);
+            _gameUIManager.ShowResultNotification(true,totalWin,spinResult,RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
         else
         {
-            _gameUIManager.ShowLoseNotification(totalLose);
+            _gameUIManager.ShowResultNotification(false,totalWin,spinResult,RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
 
         coinSpawner.DestroyAllCoins();

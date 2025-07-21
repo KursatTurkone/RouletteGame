@@ -16,6 +16,8 @@ public class GameUIManager : MonoBehaviour
    [SerializeField] private GameObject loseScreen;
    [SerializeField] private TextMeshProUGUI loseText;
    [SerializeField] private TextMeshProUGUI chipsText;
+   [SerializeField] private Image ChipColorImage;
+   [SerializeField] private TextMeshProUGUI WinningChipText;
     private BetManager betManager;
     private GameManager gameManager;
 
@@ -78,36 +80,34 @@ public class GameUIManager : MonoBehaviour
         else
             gameManager.SetCurrentSpinNumber(index-1);
     }
-    public void ShowWinNotification(int winAmount)
+    public void ShowResultNotification(bool isWin, int amount, int number, Color color)
     {
-        winText.SetText($"You Win: {winAmount}");
-        winScreen.SetActive(true);
-        MyTween.ScaleTo(this, winScreen.transform, Vector3.one, 0.5f, DisableWinScreen, EaseType.OutCubic);
+        GameObject screen = isWin ? winScreen : loseScreen;
+        TextMeshProUGUI text = isWin ? winText : loseText;
+        string prefix = isWin ? "You Win" : "You Lose";
+        text.SetText($"{prefix}: {amount}");
+        screen.SetActive(true);
+        MyTween.ScaleTo(this, screen.transform, Vector3.one, 0.5f,
+            () =>
+            {
+                ChipColorImage.gameObject.SetActive(true);
+                WinningChipText.gameObject.SetActive(true);
+                ChipColorImage.color = color;
+                WinningChipText.SetText(number.ToString());
+                DisableResultScreen(isWin);
+            }, EaseType.OutCubic);
     }
 
-    private void DisableWinScreen()
+    private void DisableResultScreen(bool isWin)
     {
-        MyTween.Delay(this, 1f, () =>
+        GameObject screen = isWin ? winScreen : loseScreen;
+        MyTween.Delay(this, 2f, () =>
         {
-            winScreen.SetActive(false);
-            winScreen.transform.localScale = Vector3.zero;
+            ChipColorImage.gameObject.SetActive(false);
+            WinningChipText.gameObject.SetActive(false);
+            screen.SetActive(false);
+            screen.transform.localScale = Vector3.zero;
         });
-    }
-
-    private void DisableLoseScreen()
-    {
-        MyTween.Delay(this, 1f, () =>
-        {
-            loseScreen.SetActive(false);
-            loseScreen.transform.localScale = Vector3.zero;
-        });
-    }
-
-    public void ShowLoseNotification(int loseAmount)
-    {
-        loseText.SetText($"You Lose: {loseAmount}");
-        loseScreen.SetActive(true);
-        MyTween.ScaleTo(this, loseScreen.transform, Vector3.one, 0.5f, DisableLoseScreen, EaseType.OutCubic);
     }
     public void UpdateChipsText(int playerChips)
     {
