@@ -8,12 +8,14 @@ public class GameUIManager : MonoBehaviour
    [SerializeField] private Button spinButton;
    [SerializeField] private Button increaseBetButton;
    [SerializeField] private Button decreaseBetButton;
+   [SerializeField] private Button getMoneyButton;
    [SerializeField] private TextMeshProUGUI betAmountText;
    [SerializeField] private TMP_Dropdown spinNumberDropdown;
    [SerializeField] private GameObject winScreen;
    [SerializeField] private TextMeshProUGUI winText;
    [SerializeField] private GameObject loseScreen;
    [SerializeField] private TextMeshProUGUI loseText;
+   [SerializeField] private TextMeshProUGUI chipsText;
     private BetManager betManager;
     private GameManager gameManager;
 
@@ -27,6 +29,7 @@ public class GameUIManager : MonoBehaviour
     {
         increaseBetButton.onClick.AddListener(OnIncreaseBetClicked);
         decreaseBetButton.onClick.AddListener(OnDecreaseBetClicked);
+        getMoneyButton.onClick.AddListener(()=>betManager.AddChips(10000));
         spinButton.onClick.AddListener(OnSpinClicked);
         SetupDropdown();
         UpdateBetAmountUI();
@@ -105,5 +108,9 @@ public class GameUIManager : MonoBehaviour
         loseText.SetText($"You Lose: {loseAmount}");
         loseScreen.SetActive(true);
         MyTween.ScaleTo(this, loseScreen.transform, Vector3.one, 0.5f, DisableLoseScreen, EaseType.OutCubic);
+    }
+    public void UpdateChipsText(int playerChips)
+    {
+        chipsText.text = playerChips.ToString("N0");
     }
 }

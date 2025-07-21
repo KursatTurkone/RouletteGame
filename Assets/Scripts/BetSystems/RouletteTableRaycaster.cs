@@ -58,8 +58,6 @@ public class RouletteTableRaycaster : MonoBehaviour
                     var payout = RoulettePayouts.GetPayoutForNumberCount(numbers.Length);
                     betManager.PlaceGroupBet(numbers, betManager.CurrentBetAmount, payout);
                 }
-
-                Debug.Log(string.Join("-", numbers));
                 return;
             }
         }
