@@ -9,14 +9,9 @@ public class GameManager : MonoBehaviour
     private int _currentNumber;
     private int _selectedBetNumber;
     public BetManager betManager;
-    private GameSaveData _saveData = new GameSaveData();
-    public List<int> WinningNumbers => _saveData.winningNumbers;
     private bool _isSpinning;
     private void Awake()
     {
-        var wNumb = SaveSystem.Load<GameSaveData>("WinningNumbers");
-        if (wNumb != null)
-            _saveData = wNumb;
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -30,8 +25,7 @@ public class GameManager : MonoBehaviour
     {
         _isSpinning = false;
         betManager.EvaluateBets(resultNumber);
-        _saveData.winningNumbers.Add(resultNumber);
-        SaveSystem.Save(_saveData, "WinningNumbers");
+     
     }
 
     public void OnSpinButtonPressed()

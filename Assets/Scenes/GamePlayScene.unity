@@ -1047,6 +1047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f01515e7ccacc264f82d2fa237a6cd7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  betManager: {fileID: 1462618317}
   coinPrefab: {fileID: 6654913270750912836, guid: 88d3d3d064b148e448b580ef587cad86, type: 3}
   spawnPoint: {fileID: 1556390582}
   raycaster: {fileID: 528489875}
@@ -3644,15 +3645,15 @@ MonoBehaviour:
   increaseBetButton: {fileID: 990774596}
   decreaseBetButton: {fileID: 108947972}
   getMoneyButton: {fileID: 1256047994}
-  betAmountText: {fileID: 497299478}
   spinNumberDropdown: {fileID: 204440408}
+  betAmountText: {fileID: 497299478}
+  chipsText: {fileID: 627579010}
   winScreen: {fileID: 529071469}
   winText: {fileID: 1265021466}
   loseScreen: {fileID: 228331775}
   loseText: {fileID: 1965503946}
-  chipsText: {fileID: 627579010}
-  ChipColorImage: {fileID: 279591994}
-  WinningChipText: {fileID: 1759205188}
+  winningChipColorImage: {fileID: 279591994}
+  winningChipText: {fileID: 1759205188}
 --- !u!1 &528489873
 GameObject:
   m_ObjectHideFlags: 0
@@ -10419,7 +10420,6 @@ MonoBehaviour:
   betStep: 5000
   minBet: 5000
   maxBet: 100000
-  playerChips: 100000
   coinSpawner: {fileID: 188286258}
   raycaster: {fileID: 528489875}
 --- !u!1 &1485149872

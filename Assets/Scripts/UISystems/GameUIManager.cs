@@ -4,34 +4,42 @@ using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
-    [Header("UI References")]
-   [SerializeField] private Button spinButton;
-   [SerializeField] private Button increaseBetButton;
-   [SerializeField] private Button decreaseBetButton;
-   [SerializeField] private Button getMoneyButton;
-   [SerializeField] private TextMeshProUGUI betAmountText;
-   [SerializeField] private TMP_Dropdown spinNumberDropdown;
-   [SerializeField] private GameObject winScreen;
-   [SerializeField] private TextMeshProUGUI winText;
-   [SerializeField] private GameObject loseScreen;
-   [SerializeField] private TextMeshProUGUI loseText;
-   [SerializeField] private TextMeshProUGUI chipsText;
-   [SerializeField] private Image ChipColorImage;
-   [SerializeField] private TextMeshProUGUI WinningChipText;
-    private BetManager betManager;
-    private GameManager gameManager;
+    [Header("Spin & Bet Controls")] [SerializeField]
+    private Button spinButton;
+
+    [SerializeField] private Button increaseBetButton;
+    [SerializeField] private Button decreaseBetButton;
+    [SerializeField] private Button getMoneyButton;
+    [SerializeField] private TMP_Dropdown spinNumberDropdown;
+    [SerializeField] private TextMeshProUGUI betAmountText;
+    [SerializeField] private TextMeshProUGUI chipsText;
+
+    [Header("Result Screens")] [SerializeField]
+    private GameObject winScreen;
+
+    [SerializeField] private TextMeshProUGUI winText;
+    [SerializeField] private GameObject loseScreen;
+    [SerializeField] private TextMeshProUGUI loseText;
+
+
+    [Header("Winning Chip Display")] [SerializeField]
+    private Image winningChipColorImage;
+
+    [SerializeField] private TextMeshProUGUI winningChipText;
+    private BetManager _betManager;
+    private GameManager _gameManager;
 
     private void Awake()
     {
-        betManager = FindObjectOfType<BetManager>();
-        gameManager = FindObjectOfType<GameManager>();
+        _betManager = FindObjectOfType<BetManager>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
     {
         increaseBetButton.onClick.AddListener(OnIncreaseBetClicked);
         decreaseBetButton.onClick.AddListener(OnDecreaseBetClicked);
-        getMoneyButton.onClick.AddListener(()=>betManager.AddChips(10000));
+        getMoneyButton.onClick.AddListener(() => _betManager.AdjustChips(10000));
         spinButton.onClick.AddListener(OnSpinClicked);
         SetupDropdown();
         UpdateBetAmountUI();
@@ -40,25 +48,26 @@ public class GameUIManager : MonoBehaviour
 
     private void OnIncreaseBetClicked()
     {
-        betManager.IncreaseBet();
+        _betManager.IncreaseBet();
         UpdateBetAmountUI();
     }
 
     private void OnDecreaseBetClicked()
     {
-        betManager.DecreaseBet();
+        _betManager.DecreaseBet();
         UpdateBetAmountUI();
     }
 
     private void OnSpinClicked()
     {
-        gameManager.OnSpinButtonPressed();
+        _gameManager.OnSpinButtonPressed();
     }
 
     public void UpdateBetAmountUI()
     {
-        betAmountText.SetText(betManager.CurrentBetAmount.ToString());
+        betAmountText.SetText(_betManager.CurrentBetAmount.ToString());
     }
+
     private void SetupDropdown()
     {
         spinNumberDropdown.ClearOptions();
@@ -70,16 +79,18 @@ public class GameUIManager : MonoBehaviour
             options.Add(i.ToString());
         spinNumberDropdown.AddOptions(options);
 
-        spinNumberDropdown.value = 0; 
-        gameManager.SetCurrentSpinNumber(-1);
+        spinNumberDropdown.value = 0;
+        _gameManager.SetCurrentSpinNumber(-1);
     }
+
     private void OnDropdownChanged(int index)
     {
         if (index == 0)
-            gameManager.SetCurrentSpinNumber(-1); 
+            _gameManager.SetCurrentSpinNumber(-1);
         else
-            gameManager.SetCurrentSpinNumber(index-1);
+            _gameManager.SetCurrentSpinNumber(index - 1);
     }
+
     public void ShowResultNotification(bool isWin, int amount, int number, Color color)
     {
         GameObject screen = isWin ? winScreen : loseScreen;
@@ -90,10 +101,10 @@ public class GameUIManager : MonoBehaviour
         MyTween.ScaleTo(this, screen.transform, Vector3.one, 0.5f,
             () =>
             {
-                ChipColorImage.gameObject.SetActive(true);
-                WinningChipText.gameObject.SetActive(true);
-                ChipColorImage.color = color;
-                WinningChipText.SetText(number.ToString());
+                winningChipColorImage.gameObject.SetActive(true);
+                winningChipText.gameObject.SetActive(true);
+                winningChipColorImage.color = color;
+                winningChipText.SetText(number.ToString());
                 DisableResultScreen(isWin);
             }, EaseType.OutCubic);
     }
@@ -103,12 +114,13 @@ public class GameUIManager : MonoBehaviour
         GameObject screen = isWin ? winScreen : loseScreen;
         MyTween.Delay(this, 2f, () =>
         {
-            ChipColorImage.gameObject.SetActive(false);
-            WinningChipText.gameObject.SetActive(false);
+            winningChipColorImage.gameObject.SetActive(false);
+            winningChipText.gameObject.SetActive(false);
             screen.SetActive(false);
             screen.transform.localScale = Vector3.zero;
         });
     }
+
     public void UpdateChipsText(int playerChips)
     {
         chipsText.text = playerChips.ToString("N0");

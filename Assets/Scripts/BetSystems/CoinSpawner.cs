@@ -1,25 +1,26 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CoinSpawner : MonoBehaviour
 {
+    [SerializeField] private BetManager betManager; 
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private RouletteTableRaycaster raycaster;
-    private readonly Dictionary<string, GameObject> activeCoins = new Dictionary<string, GameObject>();
-    private readonly Dictionary<string, int> coinAmounts = new Dictionary<string, int>();
-    private readonly Queue<GameObject> coinPool = new Queue<GameObject>();
+    private readonly Dictionary<string, GameObject> _activeCoins = new Dictionary<string, GameObject>();
+    private readonly Dictionary<string, int> _coinAmounts = new Dictionary<string, int>();
+    private readonly Queue<GameObject> _coinPool = new Queue<GameObject>();
 
 
     public void DropCoinToPosition(Vector3 targetPos, string key, int amount)
     {
         int total = amount;
-        if (coinAmounts.TryGetValue(key, out int prev))
+        if (_coinAmounts.TryGetValue(key, out int prev))
             total += prev;
-        coinAmounts[key] = total;
+        _coinAmounts[key] = total;
 
-        GameObject oldCoin = null;
-        activeCoins.TryGetValue(key, out oldCoin);
+        _activeCoins.TryGetValue(key, out var oldCoin);
 
         GameObject coin = GetCoin();
         coin.transform.position = spawnPoint.position;
@@ -28,14 +29,14 @@ public class CoinSpawner : MonoBehaviour
         coin.TryGetComponent(out CoinDisplay coinDisplay);
         if (coinDisplay != null)
             coinDisplay.SetAmount(total);
-        activeCoins[key] = coin;
+        _activeCoins[key] = coin;
 
         MyTween.JumpTo(this, coin.transform, targetPos, 2.5f, 0.65f, () =>
         {
             if (oldCoin != null && oldCoin != coin)
             {
                 oldCoin.SetActive(false);
-                coinPool.Enqueue(oldCoin);
+                _coinPool.Enqueue(oldCoin);
             }
 
             coinDisplay.PlayPutCoinSound();
@@ -45,24 +46,48 @@ public class CoinSpawner : MonoBehaviour
 
     private GameObject GetCoin()
     {
-        if (coinPool.Count > 0)
-            return coinPool.Dequeue();
+        if (_coinPool.Count > 0)
+            return _coinPool.Dequeue();
         else
             return Instantiate(coinPrefab);
     }
 
     public void DestroyAllCoins()
     {
-        foreach (var coin in activeCoins.Values)
+        foreach (var coin in _activeCoins.Values)
         {
-            if (coin != null)
+            if (coin)
             {
                 coin.SetActive(false);
-                coinPool.Enqueue(coin);
+                _coinPool.Enqueue(coin);
             }
         }
 
-        coinAmounts.Clear();
-        activeCoins.Clear();
+        _coinAmounts.Clear();
+        _activeCoins.Clear();
     }
+    public void RestoreAllCoins(Dictionary<string, int> chipData)
+    {
+        foreach (var kvp in chipData)
+        {
+            string key = kvp.Key;
+            int amount = kvp.Value;
+            Vector3 pos;
+
+            if (int.TryParse(key, out int num)) 
+                pos = raycaster.GetCellCenter(num);
+            else if (key.Contains("-")) 
+            {
+                var nums = key.Split('-');
+                int[] numbers = Array.ConvertAll(nums, int.Parse);
+                pos = raycaster.GetCellsCenter(numbers);
+            }
+            else 
+            {
+                pos = betManager.GetSpecialAreaPosition(key); 
+            }
+            DropCoinToPosition(pos, key, amount);
+        }
+    }
+
 }
