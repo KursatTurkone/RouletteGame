@@ -9,19 +9,13 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
     private readonly OrbitConfig _orbitConfig = new OrbitConfig();
 
     private List<IRouletteAnimationPhase> _phases;
-
-    [HideInInspector] public int[] numberOrder =
-    {
-        0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18,
-        29, 7, 28, 12, 35, 3, 26
-    };
+    
 
     private void Start()
     {
         _orbitConfig.orbitCenter = transform.position;
         _orbitConfig.spinOrbitRadius = Vector3.Distance(_orbitConfig.orbitCenter, sceneReferences.ball.position);
         _orbitConfig.ballHeight = sceneReferences.ball.position.y - _orbitConfig.orbitCenter.y;
-        GameManager.Instance.rouletteAnimator = this;
 
         _phases = new List<IRouletteAnimationPhase>
         {
@@ -32,9 +26,24 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
         _phases.ForEach(phase => phase.Initialize(sceneReferences.rouletteConfig, _orbitConfig, sceneReferences));
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnSpinRequested += OnSpinRequested;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnSpinRequested -= OnSpinRequested;
+    }
+
+    private void OnSpinRequested(int number)
+    {
+        AnimateSpinToNumber(number, GameEvents.SpinCompleted);
+    }
+
     public void AnimateSpinToNumber(int number, Action<int> onComplete)
     {
-        int targetIndex = Array.IndexOf(numberOrder, number);
+        int targetIndex = Array.IndexOf(RouletteNumbers.NumberOrder, number);
         if (targetIndex == -1)
         {
             onComplete?.Invoke(-1);
@@ -52,7 +61,7 @@ public class RouletteAnimator : MonoBehaviour, IRouletteAnimator
             yield return phase.Play(targetIndex);
 
         sceneReferences.ballAudio.StopRollSound();
-        onComplete?.Invoke(numberOrder[targetIndex]);
+        onComplete?.Invoke(RouletteNumbers.NumberOrder[targetIndex]);
     }
 }
 

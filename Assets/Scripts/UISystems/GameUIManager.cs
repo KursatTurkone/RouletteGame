@@ -25,13 +25,19 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
     [Header("Winning Chip Display")] [SerializeField]
     private Image winningChipColorImage;
     [SerializeField] private TextMeshProUGUI winningChipText;
-    
+
+    [Header("Extra Controls")]
+    [SerializeField] private Button clearStatisticsButton;
+    [SerializeField] private Button clearBetsButton;
+
     private void Start()
     {
         increaseBetButton.onClick.AddListener(OnIncreaseBetClicked);
         decreaseBetButton.onClick.AddListener(OnDecreaseBetClicked);
         getMoneyButton.onClick.AddListener(() => GameEvents.ChipsAdjusted(10000));
         spinButton.onClick.AddListener(OnSpinClicked);
+        clearStatisticsButton.onClick.AddListener(OnClearStatisticsClicked);
+        clearBetsButton.onClick.AddListener(OnClearBetsClicked);
         SetupDropdown();
         spinNumberDropdown.onValueChanged.AddListener(OnDropdownChanged);
     }
@@ -58,7 +64,17 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
 
     private void OnSpinClicked()
     {
-        GameManager.Instance.OnSpinButtonPressed();
+        GameEvents.SpinButtonPressedRequested();
+    }
+
+    private void OnClearStatisticsClicked()
+    {
+        GameEvents.ClearStatisticsRequested();
+    }
+
+    private void OnClearBetsClicked()
+    {
+        GameEvents.ClearBetsRequested();
     }
 
     private void UpdateBetAmountUI(int amount)
@@ -78,15 +94,15 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
         spinNumberDropdown.AddOptions(options);
 
         spinNumberDropdown.value = 0;
-        GameManager.Instance.SetCurrentSpinNumber(-1);
+        GameEvents.SetSpinNumberRequested(-1);
     }
 
     private void OnDropdownChanged(int index)
     {
         if (index == 0)
-            GameManager.Instance.SetCurrentSpinNumber(-1);
+            GameEvents.SetSpinNumberRequested(-1);
         else
-            GameManager.Instance.SetCurrentSpinNumber(index - 1);
+            GameEvents.SetSpinNumberRequested(index - 1);
     }
 
     public void ShowResultNotification(bool isWin, int amount, int number, Color color)
@@ -123,5 +139,5 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
     {
         chipsText.text = playerChips.ToString("N0");
     }
-    
+
 }

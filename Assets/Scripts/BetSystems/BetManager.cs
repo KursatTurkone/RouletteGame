@@ -67,6 +67,7 @@ public class BetManager : MonoBehaviour
         GameEvents.OnBetIncreased += OnBetIncreased;
         GameEvents.OnBetDecreased += OnBetDecreased;
         GameEvents.OnChipsAdjusted += OnChipsAdjusted;
+        GameEvents.OnClearBetsRequested += OnClearBetsRequested;
     }
 
     private void OnDisable()
@@ -75,6 +76,7 @@ public class BetManager : MonoBehaviour
         GameEvents.OnBetIncreased -= OnBetIncreased;
         GameEvents.OnBetDecreased -= OnBetDecreased;
         GameEvents.OnChipsAdjusted -= OnChipsAdjusted;
+        GameEvents.OnClearBetsRequested -= OnClearBetsRequested;
     }
 
     private void OnBetIncreased()
@@ -238,5 +240,18 @@ public class BetManager : MonoBehaviour
     private void OnApplicationPause(bool pause)
     {
         if (pause) AutoSave();
+    }
+
+    private void OnClearBetsRequested()
+    {
+        CoinService.DestroyAllCoins();
+        int totalBet = 0;
+        foreach (var bet in _placedBets)
+            totalBet += bet.Amount;
+        AdjustChips(totalBet);
+        _placedBets.Clear();
+        _activeChips.Clear();
+        SaveData.activeChips = new List<KeyValue>();
+        AutoSave();
     }
 }
