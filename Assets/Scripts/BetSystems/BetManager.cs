@@ -137,6 +137,7 @@ public class BetManager : MonoBehaviour
             AdjustChips(totalWin);
             SaveData.totalWins++;
             SaveData.totalProfit += (totalWin - totalBet);
+            GameEvents.TriggerWin();
             UIManager.ShowResultNotification(true, totalWin, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
@@ -144,6 +145,7 @@ public class BetManager : MonoBehaviour
         {
             SaveData.totalLosses++;
             SaveData.totalMoneyLoss += totalLose;
+            GameEvents.TriggerLose();
             UIManager.ShowResultNotification(false, totalLose, spinResult,
                 RouletteColorHelper.GetUnityColor(RouletteColorHelper.GetNumberColor(spinResult)));
         }
