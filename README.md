@@ -41,7 +41,7 @@ git clone https://github.com/KursatTurkone/RouletteGame.git
 Open in Unity Hub (Recommended: Unity 2021.3 LTS or newer)
 
 Install dependencies via Unity Package Manager
-(TextMeshPro is required; others are optional)
+(TextMeshPro and 2DSpriteShape are required; others are optional)
 
 Open the main scene:
 Assets/Scenes/GamePlayScene.unity
