@@ -44,7 +44,7 @@ public class CameraFXManager : MonoBehaviour
     {
         if (winParticle != null)
             winParticle.Play();
-        _shakeTime = shakeDuration; // Opsiyonel, win'de de titreme
+        _shakeTime = shakeDuration; 
     }
 
     void PlayLoseFX()

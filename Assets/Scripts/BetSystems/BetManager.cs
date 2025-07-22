@@ -13,8 +13,7 @@ public class BetManager : MonoBehaviour
     private readonly List<IPlacedBet> _placedBets = new();
     private Dictionary<string, int> _activeChips = new();
     private Dictionary<string, BetBox> _betBoxMap;
-
-    // DI (Dependency Injection)
+    
     private IGameUIManager UIManager { get; set; }
     private ICoinService CoinService { get; set; }
     private ISaveService SaveService { get; set; }
