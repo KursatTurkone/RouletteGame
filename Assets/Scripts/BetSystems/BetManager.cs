@@ -61,15 +61,48 @@ public class BetManager : MonoBehaviour
         RouletteStatisticsStore.Update(SaveData);
     }
 
-    private void OnEnable() => GameEvents.OnSpinCompleted += EvaluateBets;
+    private void OnEnable()
+    {
+        GameEvents.OnSpinCompleted += EvaluateBets;
+        GameEvents.OnBetIncreased += OnBetIncreased;
+        GameEvents.OnBetDecreased += OnBetDecreased;
+        GameEvents.OnChipsAdjusted += OnChipsAdjusted;
+    }
 
+    private void OnDisable()
+    {
+        GameEvents.OnSpinCompleted -= EvaluateBets;
+        GameEvents.OnBetIncreased -= OnBetIncreased;
+        GameEvents.OnBetDecreased -= OnBetDecreased;
+        GameEvents.OnChipsAdjusted -= OnChipsAdjusted;
+    }
 
-    private void OnDisable() => GameEvents.OnSpinCompleted -= EvaluateBets;
+    private void OnBetIncreased()
+    {
+        IncreaseBet();
+    }
 
+    private void OnBetDecreased()
+    {
+        DecreaseBet();
+    }
 
-    public void IncreaseBet() => CurrentBetAmount = Mathf.Min(CurrentBetAmount + betStep, maxBet);
+    private void OnChipsAdjusted(int delta)
+    {
+        AdjustChips(delta);
+    }
 
-    public void DecreaseBet() => CurrentBetAmount = Mathf.Max(CurrentBetAmount - betStep, minBet);
+    private void IncreaseBet()
+    {
+        CurrentBetAmount = Mathf.Min(CurrentBetAmount + betStep, maxBet);
+        GameEvents.BetAmountChanged(CurrentBetAmount);
+    }
+
+    private void DecreaseBet()
+    {
+        CurrentBetAmount = Mathf.Max(CurrentBetAmount - betStep, minBet);
+        GameEvents.BetAmountChanged(CurrentBetAmount);
+    }
 
     // Sets the current bet amount directly
     public void PlaceSpecialBet(BetType betType, int amount, Transform betTransform)
@@ -207,4 +240,3 @@ public class BetManager : MonoBehaviour
         if (pause) AutoSave();
     }
 }
-

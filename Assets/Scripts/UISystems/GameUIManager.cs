@@ -26,46 +26,44 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
     private Image winningChipColorImage;
     [SerializeField] private TextMeshProUGUI winningChipText;
     
-    private BetManager _betManager;
-    private GameManager _gameManager;
-
-    private void Awake()
-    {
-        _betManager = FindObjectOfType<BetManager>();
-        _gameManager = FindObjectOfType<GameManager>();
-    }
-
     private void Start()
     {
         increaseBetButton.onClick.AddListener(OnIncreaseBetClicked);
         decreaseBetButton.onClick.AddListener(OnDecreaseBetClicked);
-        getMoneyButton.onClick.AddListener(() => _betManager.AdjustChips(10000));
+        getMoneyButton.onClick.AddListener(() => GameEvents.ChipsAdjusted(10000));
         spinButton.onClick.AddListener(OnSpinClicked);
         SetupDropdown();
-        UpdateBetAmountUI();
         spinNumberDropdown.onValueChanged.AddListener(OnDropdownChanged);
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnBetAmountChanged += UpdateBetAmountUI;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnBetAmountChanged -= UpdateBetAmountUI;
     }
 
     private void OnIncreaseBetClicked()
     {
-        _betManager.IncreaseBet();
-        UpdateBetAmountUI();
+        GameEvents.BetIncreased();
     }
 
     private void OnDecreaseBetClicked()
     {
-        _betManager.DecreaseBet();
-        UpdateBetAmountUI();
+        GameEvents.BetDecreased();
     }
 
     private void OnSpinClicked()
     {
-        _gameManager.OnSpinButtonPressed();
+        GameManager.Instance.OnSpinButtonPressed();
     }
 
-    public void UpdateBetAmountUI()
+    private void UpdateBetAmountUI(int amount)
     {
-        betAmountText.SetText(_betManager.CurrentBetAmount.ToString());
+        betAmountText.SetText(amount.ToString());
     }
 
     private void SetupDropdown()
@@ -80,15 +78,15 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
         spinNumberDropdown.AddOptions(options);
 
         spinNumberDropdown.value = 0;
-        _gameManager.SetCurrentSpinNumber(-1);
+        GameManager.Instance.SetCurrentSpinNumber(-1);
     }
 
     private void OnDropdownChanged(int index)
     {
         if (index == 0)
-            _gameManager.SetCurrentSpinNumber(-1);
+            GameManager.Instance.SetCurrentSpinNumber(-1);
         else
-            _gameManager.SetCurrentSpinNumber(index - 1);
+            GameManager.Instance.SetCurrentSpinNumber(index - 1);
     }
 
     public void ShowResultNotification(bool isWin, int amount, int number, Color color)
@@ -125,4 +123,5 @@ public class GameUIManager : MonoBehaviour, IGameUIManager
     {
         chipsText.text = playerChips.ToString("N0");
     }
+    
 }

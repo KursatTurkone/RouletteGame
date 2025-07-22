@@ -11,4 +11,14 @@ public static class GameEvents
     {
         OnSpinCompleted?.Invoke(resultNumber);
     }
+
+    public static event System.Action OnBetIncreased;
+    public static event System.Action OnBetDecreased;
+
+    public static void BetIncreased() => OnBetIncreased?.Invoke();
+    public static void BetDecreased() => OnBetDecreased?.Invoke();
+    public static event System.Action<int> OnChipsAdjusted;
+    public static void ChipsAdjusted(int delta) => OnChipsAdjusted?.Invoke(delta);
+    public static event System.Action<int> OnBetAmountChanged;
+    public static void BetAmountChanged(int amount) => OnBetAmountChanged?.Invoke(amount);
 }
