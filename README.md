@@ -1,4 +1,5 @@
-https://gyazo.com/580dfe7206dd245c3d43539ce68a1551
+<a href="https://gyazo.com/580dfe7206dd245c3d43539ce68a1551"><img src="https://i.gyazo.com/580dfe7206dd245c3d43539ce68a1551.gif" alt="Image from Gyazo" width="1610"/></a>
+
 🎲 RouletteGame
 A Modern & Modular Roulette Simulator built with Unity
 
@@ -6,21 +7,20 @@ A Modern & Modular Roulette Simulator built with Unity
 📌 About
 This is a feature-rich Roulette Game Simulator developed in Unity (C#), supporting all classic bet types, live animated wheel and ball, persistent statistics, and a modern event-driven architecture.
 Built for code maintainability, modularity, and a great user experience.
-
-📁 Folder Structure
+```plaintext
 Assets/
 ├── Scripts/
-│   ├── BetSystems/          # Bet logic and interfaces
-│   ├── Camera/              # Camera effects
-│   ├── Managers/            # GameManager, BetManager, etc.
-│   ├── RouletteSystem/      # Wheel, animation, helpers
-│   ├── SaveSystem/          # Game state persistence
-│   ├── UISystems/           # UI panels and statistics
-│   └── Utils/               # Helpers, events
-├── ScriptableObjects/       # Game configs (RouletteConfig)
-└── Scenes/                  # Main and demo scenes
-
-🚩 Key Features
+│   ├── BetSystems/         # Bet logic and interfaces
+│   ├── Camera/             # Camera effects
+│   ├── Managers/           # GameManager, BetManager, etc.
+│   ├── RouletteSystem/     # Wheel, animation, helpers
+│   ├── SaveSystem/         # Game state persistence
+│   ├── UISystems/          # UI panels and statistics
+│   └── Utils/              # Helpers, events
+├── ScriptableObjects/      # Game configs (RouletteConfig)
+└── Scenes/                 # Main and demo scenes
+```
+## 🚩 Key Features
 ✔️ All Classic Bet Types: (straight, split, corner, dozens, red/black, even/odd, etc)
 
 ✔️ Animated Wheel & Ball: Realistic visuals and motion
@@ -33,7 +33,8 @@ Assets/
 
 ✔️ Event-driven Architecture: Loosely coupled and easily testable modules
 
-🚀 Getting Started
+
+## 🚀 Getting Started
 Clone this repo
 
 git clone https://github.com/KursatTurkone/RouletteGame.git
@@ -47,7 +48,8 @@ Assets/Scenes/GamePlayScene.unity
 
 Press Play! 🎮
 
-🕹️ How to Play
+
+## 🕹️ How to Play
 Interface Overview
 
 Top-Left: Statistics — View all your play history and stats.
@@ -90,7 +92,30 @@ Use the dropdown for test cases or demo purposes.
 
 Track your progress in the Statistics panel.
 
-👨‍💻 Code Guidelines
+## 🛠️ Technical Highlights
+Custom Particle Systems:
+Win/Lose feedbacks use hand-crafted particles for satisfying and polished game feel.
+
+Camera Shake Effects:
+Loss and win outcomes trigger unique, script-driven camera shakes for maximum immersion.
+
+Custom Tween System:
+All UI panels and feedbacks (such as popups and chip animations) use a custom, highly-performant tween system built from scratch for smooth transitions.
+
+Optimized UI & Draw Calls:
+The UI is carefully grouped and batched, minimizing draw calls for top performance on all platforms—even with rich visual feedback.
+
+Dynamic UI Grouping:
+UI objects are grouped for animation and interaction control, allowing seamless pop-ups and notifications.
+
+Scriptable Configs:
+All roulette, bet, and game configs are managed via ScriptableObjects for fast iteration and scalability.
+
+SOLID Codebase:
+Modular structure, interface-based systems, and event-driven communication for maintainability and testability.
+
+
+## 👨‍💻 Code Guidelines
 Each ScriptableObject lives in /ScriptableObjects
 
 Every interface/class has its own descriptive file
@@ -101,14 +126,16 @@ English naming and clean, maintainable code
 
 Event-based, decoupled design for flexibility
 
-📈 Statistics & Save System
+
+## 📈 Statistics & Save System
 Auto-save: Progress, bets, stats, and preferences saved on every update
 
 Resume: Return right where you left off — instantly
 
 Statistics UI: Tracks all spins, wins, losses, profit/loss, and more
 
-📜 License
+
+## 📜 License
 This project is for demonstration purposes only.
 Not intended for commercial use.
 
