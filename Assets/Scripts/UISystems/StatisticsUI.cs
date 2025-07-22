@@ -14,20 +14,19 @@ public class StatisticsUI : MonoBehaviour
    [SerializeField] private TextMeshProUGUI totalMoneyLossText;
    private void OnEnable()
    {
-      winnerNumbersText.SetText(GameManager.Instance.betManager.WinningNumbers.Count > 0
-         ? string.Join(", ", GameManager.Instance.betManager.WinningNumbers)
+      winnerNumbersText.SetText(RouletteStatisticsStore.Data.winningNumbers.Count > 0
+         ? string.Join(", ", RouletteStatisticsStore.Data.winningNumbers)
          : "No winning numbers yet");
       UpdateStatisticsUI();
    }
 
    private void UpdateStatisticsUI()
    {
-      var betManager = GameManager.Instance.betManager;
-      totalSpinsText.SetText(betManager.TotalSpins.ToString());
-      totalWinsText.SetText(betManager.TotalWins.ToString());
-      totalLossesText.SetText(betManager.TotalLosses.ToString());
-      totalProfitText.SetText(betManager.TotalProfit.ToString());
-      totalMoneyLossText.SetText(betManager.TotalMoneyLoss.ToString());
+      totalSpinsText.SetText(RouletteStatisticsStore.Data.totalSpins.ToString());
+      totalWinsText.SetText(RouletteStatisticsStore.Data.totalWins.ToString());
+      totalLossesText.SetText(RouletteStatisticsStore.Data.totalLosses.ToString());
+      totalProfitText.SetText(RouletteStatisticsStore.Data.totalProfit.ToString());
+      totalMoneyLossText.SetText(RouletteStatisticsStore.Data.totalMoneyLoss.ToString());
    }
 
 }

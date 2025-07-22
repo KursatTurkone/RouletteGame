@@ -20,12 +20,6 @@ public class BetManager : MonoBehaviour
     private ISaveService SaveService { get; set; }
     private GameSaveData SaveData { get; set; }
 
-    public List<int> WinningNumbers => SaveData.winningNumbers;
-    public int TotalSpins => SaveData.totalSpins;
-    public int TotalWins => SaveData.totalWins;
-    public int TotalLosses => SaveData.totalLosses;
-    public int TotalProfit => SaveData.totalProfit;
-    public int TotalMoneyLoss => SaveData.totalMoneyLoss;
 
     private void Awake()
     {
@@ -37,7 +31,7 @@ public class BetManager : MonoBehaviour
         foreach (var betBox in FindObjectsOfType<BetBox>())
             _betBoxMap[betBox.betType.ToString()] = betBox;
 
-        SaveData = SaveService.Load("GameSave");
+        SaveData = SaveService.Load("GameSave") ?? new GameSaveData();
         PlayerChips = SaveData.currentMoney;
         _activeChips = ToDictionary(SaveData.activeChips);
 
@@ -64,21 +58,23 @@ public class BetManager : MonoBehaviour
 
         UIManager.UpdateChipsText(PlayerChips);
         CoinService.RestoreAllCoins(_activeChips);
+        RouletteStatisticsStore.Update(SaveData);
     }
 
-    private void Start()
-    {
-        GameManager.Instance.betManager = this;
-    }
+    private void OnEnable() => GameEvents.OnSpinCompleted += EvaluateBets;
+
+
+    private void OnDisable() => GameEvents.OnSpinCompleted -= EvaluateBets;
+
 
     public void IncreaseBet() => CurrentBetAmount = Mathf.Min(CurrentBetAmount + betStep, maxBet);
 
     public void DecreaseBet() => CurrentBetAmount = Mathf.Max(CurrentBetAmount - betStep, minBet);
 
     // Sets the current bet amount directly
-    public bool PlaceSpecialBet(BetType betType, int amount, Transform betTransform)
+    public void PlaceSpecialBet(BetType betType, int amount, Transform betTransform)
     {
-        if (PlayerChips < amount) return false;
+        if (PlayerChips < amount) return;
         _placedBets.Add(new SpecialBet(betType, amount));
         AdjustChips(-amount);
 
@@ -86,7 +82,6 @@ public class BetManager : MonoBehaviour
         AddToActiveChips(key, amount);
         CoinService.DropCoinToPosition(betTransform.position + Vector3.up * 2f, key, _activeChips[key]);
         AutoSave();
-        return true;
     }
 
     // Places a bet on a single number
@@ -167,6 +162,7 @@ public class BetManager : MonoBehaviour
         SaveData.currentMoney = PlayerChips;
         SaveData.activeChips = ToKeyValueList(_activeChips);
         SaveService.Save(SaveData, "GameSave");
+        RouletteStatisticsStore.Update(SaveData);
     }
 
     public Vector3 GetSpecialAreaPosition(string key)
@@ -211,3 +207,4 @@ public class BetManager : MonoBehaviour
         if (pause) AutoSave();
     }
 }
+

@@ -5,7 +5,6 @@ using Random = UnityEngine.Random;
 public class GameManager : MonoBehaviour
 {
     [HideInInspector] public RouletteAnimator rouletteAnimator;
-    [HideInInspector] public BetManager betManager;
     public static GameManager Instance { get; private set; }
     private int _currentNumber;
     private int _selectedBetNumber;
@@ -25,7 +24,7 @@ public class GameManager : MonoBehaviour
     private void OnSpinCompleted(int resultNumber)
     {
         _isSpinning = false;
-        betManager.EvaluateBets(resultNumber);
+        GameEvents.SpinCompleted(resultNumber);
     }
 
     public void OnSpinButtonPressed()
