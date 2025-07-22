@@ -1,12 +1,12 @@
 public class SplitBetDetector : IBetDetector
 {
-    private readonly float threshold;
-    public SplitBetDetector(float threshold = 0.22f) { this.threshold = threshold; }
+    private readonly float _threshold;
+    public SplitBetDetector(float threshold = 0.22f) { this._threshold = threshold; }
 
     public bool TryDetect(float xPercent, float zPercent, int row, int col, int rows, int cols, out int[] numbers)
     {
         numbers = null;
-        if (xPercent <= threshold && row > 0)
+        if (xPercent <= _threshold && row > 0)
         {
             numbers = new int[]
             {
@@ -15,7 +15,7 @@ public class SplitBetDetector : IBetDetector
             };
             return true;
         }
-        if (xPercent >= 1 - threshold && row < rows - 1)
+        if (xPercent >= 1 - _threshold && row < rows - 1)
         {
             numbers = new int[]
             {
@@ -24,7 +24,7 @@ public class SplitBetDetector : IBetDetector
             };
             return true;
         }
-        if (zPercent <= threshold && col > 0)
+        if (zPercent <= _threshold && col > 0)
         {
             numbers = new int[]
             {
@@ -33,7 +33,7 @@ public class SplitBetDetector : IBetDetector
             };
             return true;
         }
-        if (zPercent >= 1 - threshold && col < cols - 1)
+        if (zPercent >= 1 - _threshold && col < cols - 1)
         {
             numbers = new int[]
             {

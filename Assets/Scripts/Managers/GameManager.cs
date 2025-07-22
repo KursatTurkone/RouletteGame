@@ -1,41 +1,46 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private RouletteAnimator rouletteAnimator;
-    private IRouletteAnimator animator;
-    private int currentNumber;
-    private int SelectedBetNumber;
-    public BetManager betManager;
-    private void Awake()
-    {
-        animator = rouletteAnimator;
-    }
-
-
-    private void RandomNumber()
-    {
-        int[] numberOrder = rouletteAnimator.NumberOrder;
-        int index = Random.Range(0, numberOrder.Length);
-        currentNumber = numberOrder[index];
-    }
-
+    
+    private int _currentNumber;
+    private int _selectedBetNumber;
+    private bool _isSpinning;
+    
     private void OnSpinCompleted(int resultNumber)
     {
-        betManager.EvaluateBets(resultNumber);
-        Debug.Log($"Spin ended, the number: {resultNumber}");
+        _isSpinning = false;
     }
 
-    public void OnSpinButtonPressed()
+    private void OnSpinButtonPressed()
     {
-        currentNumber = SelectedBetNumber == -1
-            ? rouletteAnimator.NumberOrder[Random.Range(0, rouletteAnimator.NumberOrder.Length)]
-            : SelectedBetNumber;
-        animator.AnimateSpinToNumber(currentNumber, OnSpinCompleted);
+        if (_isSpinning)
+            return;
+        _currentNumber = _selectedBetNumber == -1
+            ? RouletteNumbers.NumberOrder[Random.Range(0, RouletteNumbers.NumberOrder.Length)]
+            : _selectedBetNumber;
+        _isSpinning = true;
+        GameEvents.SpinRequested(_currentNumber);
     }
 
-    public void SetCurrentSpinNumber(int number)
+    private void SetCurrentSpinNumber(int number)
     {
-        SelectedBetNumber = number;
+        _selectedBetNumber = number;
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnSpinButtonPressedRequested += OnSpinButtonPressed;
+        GameEvents.OnSetSpinNumberRequested += SetCurrentSpinNumber;
+        GameEvents.OnSpinCompleted += OnSpinCompleted;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnSpinButtonPressedRequested -= OnSpinButtonPressed;
+        GameEvents.OnSetSpinNumberRequested -= SetCurrentSpinNumber;
+        GameEvents.OnSpinCompleted -= OnSpinCompleted;
     }
 }

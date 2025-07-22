@@ -1,16 +1,19 @@
 public class SpecialBet : IPlacedBet
 {
-    private BetType betType;
-    private int amount;
+    private BetType BetType { get; }
+    public int Amount { get; }
+
     public SpecialBet(BetType betType, int amount)
     {
-        this.betType = betType;
-        this.amount = amount;
+        BetType = betType;
+        Amount = amount; 
     }
-    public bool IsWin(int spinResult) => RouletteWinLogic.IsBetWin(betType, spinResult);
+
+    public bool IsWin(int spinResult) => RouletteWinLogic.IsBetWin(BetType, spinResult);
+
     public int GetWinAmount(int spinResult)
     {
         if (!IsWin(spinResult)) return 0;
-        return amount * RoulettePayouts.GetPayoutMultiplier(betType);
+        return Amount * RoulettePayouts.GetPayoutMultiplier(BetType);
     }
 }
